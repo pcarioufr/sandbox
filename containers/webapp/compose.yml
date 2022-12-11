@@ -1,0 +1,21 @@
+services:
+
+  webapp:
+    container_name: webapp
+    platform: linux/amd64
+    build: webapp/build/.
+    command: ddtrace-run gunicorn -w 2 -b :8000 --timeout 60 wsgi:app
+    volumes:
+      - ./webapp:/webapp
+    environment:
+      - HOST=maps.salsifi.io # TODO
+      - DD_SERVICE=webapp
+      - DD_LOGS_INJECTION=true
+      - DD_TRACE_ANALYTICS_ENABLED=true
+      - DD_ENV={{dd_env}}
+      - DD_AGENT_HOST={{datadog_ip}}
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "python", "service": "webapp"}]'
+    ports:
+      - 8000:8000
+

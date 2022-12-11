@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+
+  terraform:
+    container_name: terraform
+    platform: linux/amd64
+    image: "hashicorp/terraform:latest"
+    restart: unless-stopped
+    working_dir: /config
+    volumes:
+      - ./config:/config
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "terraform", "service": "terraform"}]'
+    command: tail -f /dev/null
+

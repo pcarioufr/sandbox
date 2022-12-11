@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+
+  redis:
+    container_name: redis
+    platform: linux/amd64
+    image: "redis"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "redis", "service": "core-redis"}]'
+      com.datadoghq.ad.check_names: '["redisdb"]'
+      com.datadoghq.ad.init_configs: '[{}]'
+      com.datadoghq.ad.instances: '[{"host":"%%host%%","port":"6379"}]'
+
+volumes:
+  redis:
+    driver: local

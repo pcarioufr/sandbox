@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+
+  # NGNIX :: serves map tiles 
+  # handles resquests: TLS, cache, proxy, rate-limiting 
+  nginx:
+    container_name: nginx
+    platform: linux/amd64
+    build: ./nginx/build/.
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 81:81
+      - 443:443
+    volumes:
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf # nginx file
+      - ./nginx/conf/open-telemetry:/etc/nginx/open-telemetry # opentelemetry configuration
+    labels:
+      com.datadoghq.ad.check_names: '["nginx"]'
+      com.datadoghq.ad.init_configs: '[{}]'
+      com.datadoghq.ad.instances: '[{"nginx_status_url": "http://nginx:81/nginx_status/"}]'
+      com.datadoghq.ad.logs: '[{"source": "nginx", "service": "nginx"}]'
+    environment:
+      - DD_SERVICE="nginx"
+      - DD_ENV={{dd_env}}
+      - DD_VERSION={{dd_version}}
+      - DD_AGENT_HOST={{datadog_ip}}
+#    command: nginx -s reload

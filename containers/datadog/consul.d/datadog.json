@@ -1,0 +1,18 @@
+
+{
+
+    "service" : {
+        "ID": "datadog-{{this_name}}",
+        "Name": "datadog",
+
+        "check": {
+            "id": "datadog-health-{{this_name}}",
+            "name": "datadog-health",
+            "args": ["/opt/app/scripts/health.sh", "datadog"],
+            "interval": "1s",
+            "timeout": "1s"
+        }
+
+    }
+
+}

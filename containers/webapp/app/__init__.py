@@ -1,10 +1,11 @@
 
 from flask import Flask
+from flask_redis import FlaskRedis
 
 from .log import log
 
-
 app = Flask(__name__)
+redis_store = FlaskRedis(config_prefix="REDIS_STORE")
 
 
 def create_app():
@@ -14,10 +15,12 @@ def create_app():
                 template_folder='/webapp/pages')
     app.config.from_object('config.Config')
 
+    redis_store.init_app(app)
 
     with app.app_context():
 
-        from .routes import test # test page to display tiled map
-        from .routes import health # test page to display tiled map
+        from .routes import test
+        from .routes import ping
+        from .routes import health
 
         return app

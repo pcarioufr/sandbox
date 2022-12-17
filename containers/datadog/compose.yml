@@ -18,10 +18,8 @@ services:
       - DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION=true
 #      - DD_AC_EXCLUDE=name:datadog
       - DD_LOG_LEVEL=error
-    # expose:
-    #   - 8126
-    ports:
-      - 8126:8126
+    expose:
+      - 8126
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /proc/:/host/proc/:ro

@@ -11,7 +11,7 @@ def create_app():
 
     app = Flask(__name__,
                 instance_relative_config=False,
-                template_folder='/flask-test/pages')
+                template_folder='/webapp/pages')
     app.config.from_object('config.Config')
 
 

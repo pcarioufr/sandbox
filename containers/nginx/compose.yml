@@ -23,7 +23,7 @@ services:
       com.datadoghq.ad.logs: '[{"source": "nginx", "service": "nginx"}]'
     environment:
       - DD_SERVICE="nginx"
-      - DD_ENV={{dd_env}}
-      - DD_VERSION={{dd_version}}
-      - DD_AGENT_HOST={{datadog_ip}}
-#    command: nginx -s reload
+      - DD_ENV
+      - DD_VERSION
+      - DD_AGENT_HOST
+      - DD_TRACE_AGENT_PORT

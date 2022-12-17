@@ -11,11 +11,14 @@ services:
     volumes:
       - redis:/data
     labels:
-      com.datadoghq.ad.logs: '[{"source": "redis", "service": "core-redis"}]'
+      com.datadoghq.ad.logs: '[{"source": "redis", "service": "redis"}]'
       com.datadoghq.ad.check_names: '["redisdb"]'
       com.datadoghq.ad.init_configs: '[{}]'
       com.datadoghq.ad.instances: '[{"host":"%%host%%","port":"6379"}]'
-
+    environment:
+      - DD_SERVICE="redis"
+      - DD_ENV
+      - DD_VERSION
 volumes:
   redis:
     driver: local

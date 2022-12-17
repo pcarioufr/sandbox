@@ -1,5 +1,0 @@
-logs:
-  - type: file
-    path: /var/log/consul/consul*.log
-    source: consul
-    service: consul

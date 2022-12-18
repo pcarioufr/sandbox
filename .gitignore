@@ -1,0 +1,13 @@
+
+# vscode project
+sandbox.code-workspace
+
+# webapp
+__pycache__
+
+# datadog
+containers/datadog/run
+
+# terraform
+containers/terraform/config
+!containers/terraform/config/datadog.tf

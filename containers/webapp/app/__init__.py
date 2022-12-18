@@ -12,15 +12,18 @@ def create_app():
 
     app = Flask(__name__,
                 instance_relative_config=False,
-                template_folder='/webapp/pages')
-    app.config.from_object('config.Config')
+                static_url_path='/static',
+                static_folder='./static',
+                template_folder='./pages')
+    app.config.from_object('app.config.Config')
 
     redis_store.init_app(app)
 
     with app.app_context():
 
-        from .routes import test
+        from .routes import home
         from .routes import ping
         from .routes import health
+        from .routes import after
 
         return app

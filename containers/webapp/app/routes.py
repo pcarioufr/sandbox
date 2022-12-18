@@ -1,6 +1,7 @@
 
 from flask import current_app as app
 from flask import render_template, jsonify, Response, request
+from flask import send_from_directory
 
 from app import log
 
@@ -28,6 +29,12 @@ def ping(bucket_id=None):
     return jsonify(id=bucket_id, count=count)
 
 
+@app.route('/', methods=['GET'])
+def home():
+
+    log.info("test")
+    return render_template("test.html", title="Super Title")
+
 
 @app.route('/health', methods=['GET'])
 def health():
@@ -36,9 +43,13 @@ def health():
     return jsonify(response="pong")
 
 
-@app.route('/test', methods=['GET'])
-def test():
+@app.after_request
+def after(response):
 
-    log.info("test")
-    return render_template("test.html", title="Super Title")
+    if request.endpoint == "static": 
+        # https://flask.palletsprojects.com/en/2.2.x/tutorial/static
+        # no Cache header in flask static default routines  
+        response.headers['Cache-Control'] = 'max-age=30'
+        log.warning("flask serving cache {}".format(request.path))
 
+    return response

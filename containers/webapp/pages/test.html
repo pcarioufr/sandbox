@@ -1,100 +1,56 @@
-
-     
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}" />
+    <script type="text/javascript" language="javascript" src="{{ url_for('static', filename='data/names.json') }}"></script>
+</head>
+<body>
+    <div class="box">
+        <h1>Minimalist webapp</h1>
+        <h2>Logs training app</h2>
+        <p>You can login and logout. You can also ping.</p>
+    </div>
+    <!-- <div class="box">
+        <input type="text" id="login-input" placeholder="Username">
+        <button id=login-button onclick="login()">
+            Login
+        </button>
+        <button id=logout-button onclick="login(false)">
+            Logout
+        </button>
+    </div> -->
+    <div class=box>
+        <button onclick="ping('ping')">
+            Ping
+        </button>
+    </div>
 
-<html lang="fr">
+    <script>
+    
+    function call(method, route, params={}) {
+    
+        let first = true ;
+        Object.keys(params).forEach(
+            key => {
+                if (first) { route = `${route}?`; first = false ;}
+                else { route = `${route}&`}
+                route = `${route}${key}=${params[key]}`
+            }) ;
 
-    <head>
+        let headers = {}
 
-        <title>Maps</title>
-        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+        return fetch(route, { method: method, headers: headers} )
+            .catch( error => { alert( error) } ) 
+    }
 
-    </head>
+    function ping() {
 
-    <body style="display:flex;align-items:center;flex-direction:column;height:100%">
-        
-        <!--
-        <button onclick=refresh() style="margin:20px">Empty Cache</button>
-        -->
-    </body>
+        call("POST", "http://localhost/ping/ab-1234-cd")
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-    crossorigin=""/>
-
-    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-    crossorigin=""></script>
-
-    <template id="t-loc-thumb">
-        <div class="twin-maps" style="display:flex">
-            <div class="map-sf1" style="margin:auto;width:350px;height:300px;margin:5px"></div>
-            <!-- <div class="map-sf2" style="margin:auto;width:350px;height:300px;margin:5px"></div> -->
-            <div class="map-osm" style="margin:auto;width:350px;height:300px;margin:5px"></div>  
-        </div>
-    </template>
-
-    <script> 
-;
-        // let SSF_URL = 'https://{{host}}/tiles/map/{z}/{x}/{y}.png';
-        let SF1_URL = 'https://{{host}}/tiles/map/{z}/{x}/{y}.png';
-        
-        let SF2_URL 
-
-        if (L.Browser.retina) {
-            SF2_URL = 'https://{{host}}/tiles/map2/{z}/{x}/{y}.png';
-        } else {
-            SF2_URL = 'https://{{host}}/tiles/map/{z}/{x}/{y}.png';
-        }
-
-        let OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-
-        function build(id, lat, lon, zoom) {
-
-            let temp = document.getElementById("t-loc-thumb");
-            let eTemp = temp.content.firstElementChild
-            node =  document.importNode(eTemp, true)
-
-            let e = document.body.appendChild(node)
-
-            e.querySelector(".map-sf1").id = `${id}-sf1`
-            // e.querySelector(".map-sf2").id = `${id}-sf2`
-            e.querySelector(".map-osm").id = `${id}-osm`
-
-            let mapSF1 = L.map(`${id}-sf1`, { zoomControl: false })
-            mapSF1.on( 'viewreset', _ => mapSF1.invalidateSize() );
-            mapSF1.on( 'click', _ => mapSF1.invalidateSize() );
-            mapSF1.addLayer( new L.TileLayer(SF1_URL, { minZoom: 4,maxZoom: 18}) )
-            mapSF1.setView([lat, lon], zoom)
-
-            // let mapSF2 = L.map(`${id}-sf2`, { zoomControl: false })
-            // mapSF2.on( 'viewreset', _ => mapSF2.invalidateSize() );
-            // mapSF2.on( 'click', _ => mapSF2.invalidateSize() );
-            // mapSF2.addLayer( new L.TileLayer(SF2_URL, { minZoom: 4,maxZoom: 18}) )
-            // mapSF2.setView([lat, lon], zoom)
-
-            
-            let mapOSM = L.map(`${id}-osm`, { zoomControl: false })
-            mapOSM.on( 'viewreset', _ => mapOSM.invalidateSize() );
-            mapOSM.on( 'click', _ => mapOSM.invalidateSize() );
-            mapOSM.addLayer( new L.TileLayer(OSM_URL, { minZoom: 4,maxZoom: 18}) )
-            mapOSM.setView([lat, lon], zoom)
-
-            return node
-
-        }
-
-        function refresh() {
-            // fetch("https://{{host}}/tiles", { method: "DELETE" } )
-        }
-
-        // build(1, 47.2   , -1.5   , 10)
-        build(2, 47.1808, -1.6036, 15)
-        build(3, 47.2116, -1.5433, 16)
-        // build(4, 46.9084, -2.1604, 10)
-        // build(5, 47.4971, -2.6837, 12)
-        // build(6, 46.1621, -1.2114, 10)
+    }
 
     </script>
-
+</body>
 </html>

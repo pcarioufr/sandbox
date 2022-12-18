@@ -9,11 +9,12 @@ services:
     restart: unless-stopped
     working_dir: /config
     volumes:
-      - ./config:/config
+      - ./terraform/config:/config
     labels:
       com.datadoghq.ad.logs: '[{"source": "terraform", "service": "terraform"}]'
     environment:
+      - TF_VAR_datadog_api_key=${DD_API_KEY}
+      - TF_VAR_datadog_app_key=${DD_APP_KEY}
       - DD_SERVICE="terraform"
       - DD_ENV
       - DD_VERSION
-    command: tail -f /dev/null

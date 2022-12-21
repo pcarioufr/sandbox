@@ -5,4 +5,4 @@ ddtrace==1.6.3
 
 flask-redis==0.4.0
 
-boto3==1.24.2
+qrcode[pil]==6.1

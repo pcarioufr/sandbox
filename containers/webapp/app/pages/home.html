@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='sandbox.css') }}" />
+</head>
+<body>
+
+    <div class="input-group">
+
+        <input id="input">
+        <span class="input-helper">Your link here</span>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24" width="24" height="24"
+            class="loader">
+            <path fill="none" d="M0 0h24v24H0z"></path><path d="M12 2a1 1 0 0 1 1 1v3a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1zm0 15a1 1 0 0 1 1 1v3a1 1 0 0 1-2 0v-3a1 1 0 0 1 1-1zm10-5a1 1 0 0 1-1 1h-3a1 1 0 0 1 0-2h3a1 1 0 0 1 1 1zM7 12a1 1 0 0 1-1 1H3a1 1 0 0 1 0-2h3a1 1 0 0 1 1 1zm12.071 7.071a1 1 0 0 1-1.414 0l-2.121-2.121a1 1 0 0 1 1.414-1.414l2.121 2.12a1 1 0 0 1 0 1.415zM8.464 8.464a1 1 0 0 1-1.414 0L4.93 6.344a1 1 0 0 1 1.414-1.415L8.464 7.05a1 1 0 0 1 0 1.414zM4.93 19.071a1 1 0 0 1 0-1.414l2.121-2.121a1 1 0 1 1 1.414 1.414l-2.12 2.121a1 1 0 0 1-1.415 0zM15.536 8.464a1 1 0 0 1 0-1.414l2.12-2.121a1 1 0 0 1 1.415 1.414L16.95 8.464a1 1 0 0 1-1.414 0z"></path>
+        </svg>
+
+    </div>
+
+    <div id="qrcode" class="qrcode">
+        <img></img>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24" width="24" height="24"
+            class="qrcode">
+            <path fill="none" d="M0 0h24v24H0z"/><path d="M16 17v-1h-3v-3h3v2h2v2h-1v2h-2v2h-2v-3h2v-1h1zm5 4h-4v-2h2v-2h2v4zM3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h3v2h-3v-2zM6 6h2v2H6V6zm0 10h2v2H6v-2zM16 6h2v2h-2V6z"/>
+        </svg>
+        </div>
+    </div>
+
+    <script>
+    
+        let eInputG = document.querySelector('.input-group')
+        let eInput = document.getElementById('input')
+        eInput.focus();
+        eInput.select();
+
+        let eQRCode = document.getElementById('qrcode')
+
+        let eIMG    = eQRCode.querySelector("img")
+        eIMG.classList.add("hidden")
+
+        let eSVG    = eQRCode.querySelector("svg")
+        eSVG.classList.remove("hidden")
+
+        function imageAssign(div,blob) {
+            div.setAttribute("src",""+URL.createObjectURL(blob))
+        }
+        
+        function call(method, route, params={}) {
+        
+            let first = true ;
+            Object.keys(params).forEach(
+                key => {
+                    if (first) { route = `${route}?`; first = false ;}
+                    else { route = `${route}&`}
+                    route = `${route}${key}=${params[key]}`
+                }) ;
+
+            let headers = {}
+
+            return fetch(route, { method: method, headers: headers} )
+                   .catch( error => { alert( error) } ) 
+
+        }
+
+        function debounce(func, wait = 500) {   
+            var timeout;
+            return function() {
+                var context = this, args = arguments;
+                var later = function() { timeout = null; func.apply(context, args); };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);        
+            }
+        }
+
+        function ping() {
+
+            call("GET", `http://localhost/qrcode`, {link: eInput.value})
+            .then(r => r.blob())
+            .then(blob => imageAssign( eIMG, blob) )
+            .then(_ => {
+                eInputG.classList.remove("loading")
+                eSVG.classList.add("hidden")
+                eIMG.classList.remove("hidden")
+                }
+            )
+            
+            eIMG.onclick = ( _ => this.onclick(link) )
+
+        }
+
+        eInput.addEventListener('input', debounce( ping , 1000))
+        eInput.addEventListener('input', _ => { eInputG.classList.add("loading") } )
+
+    </script>
+
+</body>
+</html>

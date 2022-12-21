@@ -1,13 +1,14 @@
 
 from flask import current_app as app
 from flask import render_template, jsonify, Response, request
-from flask import send_from_directory
+from flask import send_from_directory, send_file
 
 from app import log
+from app import redis_store
 
 from ddtrace import tracer
-
-from app import redis_store
+import io
+import qrcode
 
 
 @app.route('/ping/<bucket_id>', methods=['GET', 'POST'])
@@ -32,8 +33,7 @@ def ping(bucket_id=None):
 @app.route('/', methods=['GET'])
 def home():
 
-    log.info("test")
-    return render_template("test.html", title="Super Title")
+    return render_template("home.html", title="Super Title")
 
 
 @app.route('/health', methods=['GET'])
@@ -43,13 +43,46 @@ def health():
     return jsonify(response="pong")
 
 
+@app.route('/qrcode', methods=['GET'])
+def qr_code():
+
+    link = request.args.get("link")
+    if link is None:
+        return jsonify(), 400
+
+    
+    # https://pypi.org/project/qrcode/#description
+
+    qr = qrcode.QRCode( 
+                box_size=12,
+                error_correction=qrcode.constants.ERROR_CORRECT_M
+        )
+    qr.add_data(link)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="#ece2ce", back_color="#0c6f50")
+    img.convert('RGB')
+
+    img_io = io.BytesIO()
+    img.get_image().save(img_io, 'PNG')
+    img_io.seek(0)
+
+    return send_file(img_io, mimetype='image/png')
+
+
 @app.after_request
 def after(response):
 
-    if request.endpoint == "static": 
-        # https://flask.palletsprojects.com/en/2.2.x/tutorial/static
-        # no Cache header in flask static default routines  
+    log.debug("endpoint = {}".format(request.endpoint))
+
+    # https://flask.palletsprojects.com/en/2.2.x/tutorial/static
+    # no Cache header in flask static default routines
+
+    if request.endpoint == "static":   
         response.headers['Cache-Control'] = 'max-age=30'
-        log.warning("flask serving cache {}".format(request.path))
+        log.warning("flask serving satic {}".format(request.path))
+
+    elif request.endpoint == "qr_code": 
+        response.headers['Cache-Control'] = 'max-age=30'
 
     return response

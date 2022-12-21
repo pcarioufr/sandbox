@@ -33,7 +33,11 @@ def ping(bucket_id=None):
 @app.route('/', methods=['GET'])
 def home():
 
-    return render_template("home.html", title="Super Title")
+    return render_template(
+        "home.html", 
+        clientToken=app.config["DD_CLIENT_TOKEN"],
+        applicationId=app.config["DD_APPLICATION_ID"]
+        )
 
 
 @app.route('/health', methods=['GET'])

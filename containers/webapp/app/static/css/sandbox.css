@@ -14,7 +14,7 @@ html {
 
 @font-face {
     font-family: sandbox;
-    src: url("./fonts/Roboto-Regular.ttf");
+    src: url("../fonts/Roboto-Regular.ttf");
 }
 
 * {
@@ -51,12 +51,12 @@ body {
 /* INPUT SECTION */
 
 
-.input-group {
+.c-input {
     position: relative;
     width: 400px;
 }
   
-.input-group input {
+.c-input input {
 
     height: 36px; 
     width: 100%;
@@ -84,7 +84,7 @@ body {
     100% { transform: rotate(360deg) }
 }
 
-.input-group > svg {
+.c-input > svg {
     position: absolute;
     top: 14px;
     right: 10px;
@@ -92,23 +92,23 @@ body {
     animation: spin 2s linear infinite;
 }
 
-.input-group:not(.loading) > svg {
+.c-input:not(.loading) > svg {
     visibility: hidden;
 }
 
-.input-group.loading > svg {
+.c-input.loading > svg {
     visibility: visible;
 }
 
 
-.input-group > .input-helper {
+.c-input > .input-helper {
     font-size: 12px;
     color: var(--beige);
     margin: 4px;
 }
 
-.input-group > input:hover,
-.input-group > input:focus {
+.c-input > input:hover,
+.c-input > input:focus {
     border-color: var(--green);
 }
 

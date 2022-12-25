@@ -36,7 +36,8 @@ def home():
     return render_template(
         "home.html", 
         clientToken=app.config["DD_CLIENT_TOKEN"],
-        applicationId=app.config["DD_APPLICATION_ID"]
+        applicationId=app.config["DD_APPLICATION_ID"],
+        dd_version=app.config["DD_VERSION"]
         )
 
 

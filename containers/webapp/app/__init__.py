@@ -22,7 +22,6 @@ def create_app():
     with app.app_context():
 
         from .routes import home
-        from .routes import ping
         from .routes import health
         from .routes import after
 

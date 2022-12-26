@@ -11,25 +11,6 @@ import io
 import qrcode
 
 
-@app.route('/ping/<bucket_id>', methods=['GET', 'POST'])
-def ping(bucket_id=None):
-
-    if bucket_id is None:
-        return Response("oops",status=400)
-
-    if request.method == 'POST':
-        redis_store.incr(bucket_id, 1)
-        redis_store.expire(bucket_id, 10)
-
-    try:
-        count = redis_store.get(bucket_id).decode("utf-8")
-    except Exception as e:
-        log.info("{}".format(e))
-        count = 0
-
-    return jsonify(id=bucket_id, count=count)
-
-
 @app.route('/', methods=['GET'])
 def home():
 
@@ -44,8 +25,8 @@ def home():
 @app.route('/health', methods=['GET'])
 def health():
 
-    log.info("health")
-    return jsonify(response="pong")
+    log.debug("health check ok")
+    return jsonify(), 204
 
 
 @app.route('/qrcode', methods=['GET'])
@@ -55,24 +36,45 @@ def qr_code():
     if link is None:
         return jsonify(), 400
 
+    ## Generates the QRCode ##### ##### ##### #####
     
     # https://pypi.org/project/qrcode/#description
-
     qr = qrcode.QRCode( 
                 box_size=12,
                 error_correction=qrcode.constants.ERROR_CORRECT_M
         )
     qr.add_data(link)
-    qr.make(fit=True)
 
-    img = qr.make_image(fill_color="#ece2ce", back_color="#0c6f50")
-    img.convert('RGB')
+    with tracer.trace("qrcode.make"):
+        qr.make(fit=True)
 
-    img_io = io.BytesIO()
-    img.get_image().save(img_io, 'PNG')
+    with tracer.trace("qrcode.image.make"):
+        img = qr.make_image(fill_color="#ece2ce", back_color="#0c6f50")
+    with tracer.trace("qrcode.image.convert"):
+        img.convert('RGB')
+
+    with tracer.trace("qrcode.image.save"):
+        img_io = io.BytesIO()
+        img.get_image().save(img_io, 'PNG')
+
     img_io.seek(0)
+    response = send_file(img_io, mimetype='image/png')
 
-    return send_file(img_io, mimetype='image/png')
+    ## Some sanboxy statistics ##### ##### ##### #####
+
+    # keeps track of how often this QRCode has been generated
+    redis_store.incr(link, 1)
+
+    # and returns the value as response header 
+    try:
+        count = redis_store.get(link).decode("utf-8")
+    except Exception as e:
+        log.info("{}".format(e))
+        count = 0
+
+    response.headers['X-Sandbox-Count'] = count
+
+    return response
 
 
 @app.after_request

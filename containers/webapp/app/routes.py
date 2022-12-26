@@ -34,7 +34,7 @@ def ping(bucket_id=None):
 def home():
 
     return render_template(
-        "home.html", 
+        "home.jinja", 
         clientToken=app.config["DD_CLIENT_TOKEN"],
         applicationId=app.config["DD_APPLICATION_ID"],
         dd_version=app.config["DD_VERSION"]

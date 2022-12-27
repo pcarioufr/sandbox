@@ -18,7 +18,8 @@ def home():
         "home.jinja", 
         clientToken=app.config["DD_CLIENT_TOKEN"],
         applicationId=app.config["DD_APPLICATION_ID"],
-        dd_version=app.config["DD_VERSION"]
+        dd_version=app.config["DD_VERSION"],
+        dd_env=app.config["DD_ENV"]
         )
 
 

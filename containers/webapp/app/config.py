@@ -8,3 +8,4 @@ class Config:
     DD_CLIENT_TOKEN = os.environ.get("DD_CLIENT_TOKEN")
     DD_APPLICATION_ID = os.environ.get("DD_APPLICATION_ID")
     DD_VERSION = os.environ.get("DD_VERSION")
+    DD_ENV = os.environ.get("DD_ENV")

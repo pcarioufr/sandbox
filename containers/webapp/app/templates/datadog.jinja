@@ -1,5 +1,10 @@
 
-<!-- Procedure from https://docs.datadoghq.com/real_user_monitoring/browser/ -->
+<!-- See https://docs.datadoghq.com/logs/log_collection/javascript -->
+<!--     https://docs.datadoghq.com/real_user_monitoring/browser  -->
+<script 
+    type="text/javascript" 
+    src="https://www.datadoghq-browser-agent.com/datadog-logs-v4.js">
+</script>
 
 <script
     src="https://www.datadoghq-browser-agent.com/datadog-rum-v4.js"
@@ -7,12 +12,27 @@
 </script>
 
 <script>
+
+    window.DD_LOGS &&
+    DD_LOGS.init({
+        site: 'datadoghq.com',
+        clientToken: '{{clientToken}}',
+        env: '{{dd_env}}',
+        version: '{{dd_version}}',
+        service: 'browser',
+        site: 'datadoghq.com',
+        forwardErrorsToLogs: true,
+        sampleRate: 100,
+        forwardConsoleLogs: 'all',
+    })
+
     window.DD_RUM && window.DD_RUM.init({
-    clientToken: '{{clientToken}}',
-    applicationId: '{{applicationId}}',
-    version: '{{dd_version}}',
     site: 'datadoghq.com',
-    service: 'sandbox',
+    clientToken: '{{clientToken}}',
+    env: '{{dd_env}}',
+    version: '{{dd_version}}',
+    service: 'browser',
+    applicationId: '{{applicationId}}',
     sampleRate: 100,
     sessionReplaySampleRate: 20,
     trackInteractions: true,
@@ -22,5 +42,9 @@
     });
 
     window.DD_RUM &&
-    window.DD_RUM.startSessionReplayRecording();
+    window.DD_RUM.startSessionReplayRecording() ;
+
+    // window.DD_RUM && window.DD_RUM.setUser({ id: '{{user_id}}', anonymous: '{{anonymous}}'})
+    // window.DD_RUM && window.DD_RUM.addRumGlobalContext('domain', '{{domain}}');
+
 </script>

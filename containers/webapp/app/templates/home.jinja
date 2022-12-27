@@ -21,7 +21,8 @@
     
         /* where users writes QRCode content */
         let cInput = new CTextInput()
-        cInput.focus() ; cInput.select();
+        cInput.helper = "your link here" ;
+        cInput.focus() ; cInput.select() ;
 
         /* where QRCode outputs */
         let cQRCode = new CQRCode("/qrcode", "link" ) 
